@@ -1,0 +1,7 @@
+- [x] Add `DashboardTab` and `selectedTab` to `AppState`
+- [x] Implement Custom Tab Switcher in `DashboardScreen`
+- [x] Refactor `DashboardScreen` to toggle between Tasks and Habits
+- [x] Apply UI polish to top cards (Success Score, Progress, Chart)
+- [x] Refine `DayTaskPanel` UI
+- [x] Refine `HabitGrid` UI
+- [x] Final visual check and theme verification
