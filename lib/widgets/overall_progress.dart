@@ -43,7 +43,7 @@ class OverallProgress extends StatelessWidget {
           // Use a bounded chart height so the card layout stays stable on web
           // and desktop preview, avoiding RenderFlex overflow.
           SizedBox(
-            height: 160,
+            height: 140,
             child: BarChart(
               BarChartData(
                 alignment: BarChartAlignment.spaceAround,

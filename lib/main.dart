@@ -34,7 +34,6 @@ class MyApp extends StatelessWidget {
                 primary: AppColors.primaryGreen,
                 secondary: AppColors.accentStart,
                 surface: Colors.white,
-                background: AppColors.background,
               ),
               textTheme:
                   GoogleFonts.outfitTextTheme(ThemeData.light().textTheme),
@@ -53,7 +52,6 @@ class MyApp extends StatelessWidget {
                 brightness: Brightness.dark,
                 primary: AppColors.primaryGreen,
                 surface: const Color(0xFF1E1E1E),
-                background: const Color(0xFF121212),
               ),
               textTheme:
                   GoogleFonts.outfitTextTheme(ThemeData.dark().textTheme),

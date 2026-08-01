@@ -56,7 +56,7 @@ class SuccessScoreCard extends StatelessWidget {
               Icon(Icons.trending_up, color: AppColors.primaryGreen.withOpacity(0.5)),
             ],
           ),
-          const Spacer(),
+          const SizedBox(height: 24),
           Center(
             child: CircularPercentIndicator(
               radius: 54.0,
@@ -76,7 +76,7 @@ class SuccessScoreCard extends StatelessWidget {
               backgroundColor: AppColors.lightGreen.withOpacity(0.2),
             ),
           ),
-          const Spacer(),
+          const SizedBox(height: 12),
         ],
       ),
     );

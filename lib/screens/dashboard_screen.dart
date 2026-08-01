@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/app_state.dart';
+import '../widgets/date_selector.dart';
 import '../widgets/daily_tasks.dart';
 import '../widgets/habit_grid.dart';
 import '../widgets/overall_progress.dart';
@@ -44,21 +45,50 @@ class DashboardScreen extends StatelessWidget {
                   _buildSummarySection(isMobile),
                   const SizedBox(height: 32),
 
-                  // Tab Switcher
-                  Center(
-                    child: _buildTabSwitcher(context, appState),
+                  // Navigation Section (Date Selector & Tab Switcher)
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surface,
+                      borderRadius: BorderRadius.circular(32),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.03),
+                          blurRadius: 15,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                    child: isMobile
+                        ? Column(
+                            children: [
+                              const DateSelector(),
+                              const SizedBox(height: 20),
+                              _buildTabSwitcher(context, appState),
+                            ],
+                          )
+                        : Row(
+                            children: [
+                              const Expanded(child: DateSelector()),
+                              const SizedBox(width: 24),
+                              _buildTabSwitcher(context, appState),
+                              const SizedBox(width: 12),
+                            ],
+                          ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 32),
 
                   // Content Section
                   AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 400),
+                    duration: const Duration(milliseconds: 500),
+                    switchInCurve: Curves.easeOutCubic,
+                    switchOutCurve: Curves.easeInCubic,
                     transitionBuilder: (Widget child, Animation<double> animation) {
                       return FadeTransition(
                         opacity: animation,
                         child: SlideTransition(
                           position: Tween<Offset>(
-                            begin: const Offset(0.0, 0.05),
+                            begin: const Offset(0.0, 0.02),
                             end: Offset.zero,
                           ).animate(animation),
                           child: child,
@@ -112,7 +142,7 @@ class DashboardScreen extends StatelessWidget {
       );
     }
     return SizedBox(
-      height: 240,
+      height: 280,
       child: Row(
         children: const [
           Expanded(child: SuccessScoreCard()),

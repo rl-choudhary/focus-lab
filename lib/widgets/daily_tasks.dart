@@ -338,7 +338,6 @@ class ConfettiWidget extends AnimatedWidget {
 
 class ConfettiPainter extends CustomPainter {
   final double progress;
-  final Random _random = Random();
 
   ConfettiPainter(this.progress);
 

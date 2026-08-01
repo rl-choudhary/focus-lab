@@ -31,21 +31,25 @@ class AppState extends ChangeNotifier {
   }
 
   Future<void> _loadFromPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
+    try {
+      final prefs = await SharedPreferences.getInstance();
 
-    // Load Theme
-    _isDarkMode = prefs.getBool('isDarkMode') ?? false;
+      // Load Theme
+      _isDarkMode = prefs.getBool('isDarkMode') ?? false;
 
-    // Load Habits
-    final habitsJson = prefs.getStringList('habits');
-    if (habitsJson != null) {
-      _habits = habitsJson.map((e) => Habit.fromJson(jsonDecode(e))).toList();
-    }
+      // Load Habits
+      final habitsJson = prefs.getStringList('habits');
+      if (habitsJson != null) {
+        _habits = habitsJson.map((e) => Habit.fromJson(jsonDecode(e))).toList();
+      }
 
-    // Load Tasks
-    final tasksJson = prefs.getStringList('tasks');
-    if (tasksJson != null) {
-      _tasks = tasksJson.map((e) => AppTask.fromJson(jsonDecode(e))).toList();
+      // Load Tasks
+      final tasksJson = prefs.getStringList('tasks');
+      if (tasksJson != null) {
+        _tasks = tasksJson.map((e) => AppTask.fromJson(jsonDecode(e))).toList();
+      }
+    } catch (e) {
+      debugPrint("Error loading from prefs: $e");
     }
 
     notifyListeners();

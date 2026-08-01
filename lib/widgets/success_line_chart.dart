@@ -42,8 +42,8 @@ class SuccessLineChart extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          AspectRatio(
-            aspectRatio: 1.6,
+          SizedBox(
+            height: 140,
             child: LineChart(
               LineChartData(
                 gridData: FlGridData(

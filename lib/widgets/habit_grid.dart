@@ -267,6 +267,5 @@ class _HabitGridState extends State<HabitGrid> {
         ],
       ),
     );
-
   }
 }
