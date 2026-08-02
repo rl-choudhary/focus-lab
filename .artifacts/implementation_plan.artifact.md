@@ -1,41 +1,34 @@
-# Implementation Plan - Modern Date Selector
+# Implementation Plan - Synchronize Date Selection and UI Polish
 
-The goal is to implement a new, modern date selector based on the provided image and integrate it into the dashboard, potentially placing it alongside the Tasks/Habits toggle.
+This plan focuses on aligning the `DateSelector` and `HabitGrid` date ranges and refining the typography and component sizing in the Habit Tracker.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> - The new date selector will be a horizontal scrollable list of dates.
-> - The "selected" state will feature a green pill for the day name and a white circle for the day number, matching the provided screenshot.
-> - I will attempt to place the Date Selector and the Tab Switcher in a `Row` on wider screens, while stacking them on mobile for better accessibility.
+> - I will set both the `DateSelector` and `HabitGrid` to display exactly **30 days**, ending with Today.
+> - This will ensure that T1 (Habit Grid dates) and S1 (Date Selector dates) are always perfectly synchronized.
 
 ## Proposed Changes
 
-### [New Widget] [DateSelector](file:///C:/Users/infod/AndroidStudioProjects/focus_lab_flutter-main/lib/widgets/date_selector.dart)
+### [DateSelector](file:///C:/Users/infod/AndroidStudioProjects/focus_lab_flutter-main/lib/widgets/date_selector.dart)
 
-- [NEW] Create a new file `lib/widgets/date_selector.dart`.
-- Implement a `StatefulWidget` (or `Stateless` with `AppState`) that displays a horizontal list of dates.
-- Styling:
-    - Pill shape for the day name (e.g., "Tue").
-    - Circular background for the day number.
-    - Animation when switching dates.
-    - Auto-scroll to the selected date on load.
-
-### [DashboardScreen](file:///C:/Users/infod/AndroidStudioProjects/focus_lab_flutter-main/lib/screens/dashboard_screen.dart)
-
-- Integrate the `DateSelector` widget.
-- Update the layout to accommodate the new selector.
-- Use a `Wrap` or `Column`/`Row` combination to place it "to the left" of the tab switcher if space permits.
+- Update `_days` generation to **30 days** (from 14).
+- Ensure the last day is always Today.
 
 ### [HabitGrid](file:///C:/Users/infod/AndroidStudioProjects/focus_lab_flutter-main/lib/widgets/habit_grid.dart)
 
-- Ensure the grid's internal date header remains functional or syncs perfectly with the new global selector.
-- Consider refining the `HabitGrid` header to avoid redundancy if the global selector is nearby.
+- **Typography**: Increase habit title font size to **16** (from 14) and make it semi-bold to match other dashboard elements.
+- **Checkbox Scaling**: Adjust the interactive checkbox size to be more prominent and ensure it scales smoothly.
+- **Spacing**: Refine the padding around the "ADD" button and habit list to eliminate dead space.
+
+### [AppState](file:///C:/Users/infod/AndroidStudioProjects/focus_lab_flutter-main/lib/models/app_state.dart)
+
+- No changes required, as the core state already handles the selected date correctly.
 
 ## Verification Plan
 
 ### Manual Verification
-- Verify the "Selected" state matches the image (Green pill + White circle).
-- Verify horizontal scrolling works smoothly.
-- Verify clicking a date updates both Tasks and Habit views.
-- Test responsiveness (Mobile vs Desktop).
+- Verify that both the top date selector and the habit grid show the same range of dates.
+- Check that "Today" is correctly identified and highlighted in both widgets.
+- Confirm habit titles are more readable and match the app's overall text style.
+- Test the habit checkbox interactivity and haptic feedback.

@@ -130,13 +130,32 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateHabitTitle(String id, String newTitle) {
+  void addHabit(String title, String emoji) {
+    _habits.add(Habit(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        title: title,
+        iconEmoji: emoji));
+    _saveToPrefs();
+    notifyListeners();
+  }
+
+  void deleteHabit(String habitId) {
+    _habits.removeWhere((h) => h.id == habitId);
+    _saveToPrefs();
+    notifyListeners();
+  }
+
+  void updateHabit(String id, String newTitle, String newEmoji) {
     final index = _habits.indexWhere((h) => h.id == id);
     if (index != -1) {
-      _habits[index] = _habits[index].copyWith(title: newTitle);
+      _habits[index] = _habits[index].copyWith(title: newTitle, iconEmoji: newEmoji);
       _saveToPrefs();
       notifyListeners();
     }
+  }
+
+  void updateHabitTitle(String id, String newTitle) {
+    updateHabit(id, newTitle, _habits.firstWhere((h) => h.id == id).iconEmoji);
   }
 
   Map<String, dynamic> getWeeklyProgressStats() {

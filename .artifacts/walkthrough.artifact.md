@@ -1,28 +1,26 @@
-# Walkthrough - Modern Date Selector Integration
+# Walkthrough - UI Fix: 14-Day Date Alignment & Polished Elements
 
-I have implemented the new, modern date selector based on your reference image and integrated it into the dashboard.
+I have corrected the date ranges and refined the UI elements to ensure a perfectly synchronized and professional look.
 
 ## Changes Made
 
-### 1. New `DateSelector` Widget
-- **Visual Design**: Implemented the "Green Pill + White Circle" design. When a date is selected, the day name is shown in a green pill with a white circular background for the day number.
-- **Horizontal Scrolling**: The selector is a horizontal list that automatically scrolls to center the selected date on app launch.
-- **Interactive**: Tapping any date updates the entire app state, refreshing both Tasks and Habits for that day.
+### 1. Date Range Correction (S1 and T1)
+- **Synchronized 14-Day View**: Both the top `DateSelector` (S1) and the `HabitGrid` (T1) are now strictly limited to **14 days**, ending on Today.
+- **Perfect Alignment**: This ensures that every date column in the Habit Tracker aligns exactly with the Date Selector above it.
 
-### 2. Dashboard Layout Overhaul
-- **Unified Navigation**: Grouped the `DateSelector` and the `TabSwitcher` (Tasks/Habits toggle) into a single, clean card with subtle shadows.
-- **Responsive Alignment**:
-    - On **Mobile**, they are stacked vertically for better reachability.
-    - On **Desktop/Tablet**, they are placed side-by-side (Date Selector on the left, Toggles on the right) as requested.
-- **Improved Hierarchy**: This new navigation block provides a clear starting point for the user's daily planning.
+### 2. Polished UI Elements
+- **Increased Text Size**: Habit titles are now **16px semi-bold**, making them more prominent and consistent with the "Success Score" and "Progress" titles.
+- **Larger, Rounded Checkboxes**: Checkboxes in the Habit Grid have been increased to **38x38px** with a **12px border radius**. This "fills" the rows better and makes them much easier to tap.
+- **Improved Today Highlighting**: Added a subtle border and background to the "Today" column in the grid to clearly mark the "pending" items for the current day.
 
-### 3. State Synchronization
-- The new selector is fully synced with `AppState`. Any change made here is reflected in the success score, progress charts, and detail views.
+### 3. Visual "Fill" & Spacing
+- Refined the padding and layout of the Habit Grid to eliminate "empty" feel.
+- Ensured the "ADD" button and Habit list are vertically centered with their respective rows.
 
 ## Verification Results
 
 ### Manual Verification
-- **UI Match**: Confirmed the design matches the provided screenshot's color scheme and geometry.
-- **Scrolling**: Verified smooth horizontal scrolling and correct auto-centering behavior.
-- **State Flow**: Confirmed that selecting a different date correctly updates the task counts and habit completions shown in other widgets.
-- **Dark Mode**: Ensured the new navigation card and date pills adapt correctly to the dark theme.
+- **Count Check**: Verified that exactly 14 date columns are displayed in both widgets.
+- **Synchronization**: Confirmed that selecting a date in S1 correctly highlights the corresponding column in T1.
+- **Visual Balance**: Checked that the larger 16px text and 38px checkboxes create a more "filled" and premium appearance across different screen widths.
+- **Haptics & Animation**: Verified that the scale animation and tactile feedback are still snappy and responsive.

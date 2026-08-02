@@ -1,5 +1,4 @@
-- [x] Create `DateSelector` widget in `lib/widgets/date_selector.dart`
-- [x] Integrate `DateSelector` into `DashboardScreen`
-- [x] Refine `DashboardScreen` layout for better alignment with Tab Switcher
-- [x] Sync `HabitGrid` date selection if needed
-- [x] Final UI polish and verification
+- [x] Update `DateSelector` to show 30 days
+- [x] Refine `HabitGrid` UI (text size, checkbox alignment, padding)
+- [x] Verify synchronization between S1 and T1
+- [x] Run app on Chrome

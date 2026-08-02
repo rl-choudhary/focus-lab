@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../models/app_state.dart';
 import '../theme/colors.dart';
+import '../models/habit.dart';
 
 class HabitGrid extends StatefulWidget {
   const HabitGrid({super.key});
@@ -87,71 +89,60 @@ class _HabitGridState extends State<HabitGrid> {
       WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToSelected());
     }
 
-    // Generate last 30 days for example
+    // Generate last 14 days
     final today = DateTime.now();
     final days = List.generate(
         14, (index) => today.subtract(Duration(days: 13 - index)));
 
     return Container(
+      width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Fixed Habit Column
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(
-                      height: 60), // Header spacer
+                  SizedBox(
+                    height: 60,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 12, top: 8),
+                      child: TextButton.icon(
+                        onPressed: () => _showAddHabitDialog(context, appState),
+                        icon: const Icon(Icons.add, size: 18, color: AppColors.primaryGreen),
+                        label: const Text(
+                          "ADD",
+                          style: TextStyle(
+                            color: AppColors.primaryGreen,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                          ),
+                        ),
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          backgroundColor: AppColors.primaryGreen.withOpacity(0.1),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        ),
+                      ),
+                    ),
+                  ),
                   ...habits.map((habit) => Container(
                         height: 54, // Match row height
                         alignment: Alignment.centerLeft,
                         padding: const EdgeInsets.only(left: 12, right: 8),
                         child: InkWell(
                           borderRadius: BorderRadius.circular(8),
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                final controller =
-                                    TextEditingController(text: habit.title);
-                                return AlertDialog(
-                                  title: const Text("Edit Habit"),
-                                  content: TextField(
-                                    controller: controller,
-                                    autofocus: true,
-                                    decoration: const InputDecoration(
-                                        labelText: "Habit Title"),
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      child: const Text("Cancel"),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        if (controller.text.isNotEmpty) {
-                                          appState.updateHabitTitle(
-                                              habit.id, controller.text);
-                                        }
-                                        Navigator.pop(context);
-                                      },
-                                      child: const Text("Save"),
-                                    )
-                                  ],
-                                );
-                              },
-                            );
-                          },
+                          onTap: () => _showEditHabitDialog(context, appState, habit),
                           child: Text(
                             "${habit.iconEmoji} ${habit.title}",
                             style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize:
-                                    14, // Maintained/slightly tweaked text size
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
                                 color: Theme.of(context)
                                     .textTheme
                                     .bodyMedium
@@ -174,13 +165,23 @@ class _HabitGridState extends State<HabitGrid> {
                               date.month == appState.selectedDate.month &&
                               date.year == appState.selectedDate.year;
 
+                      final isToday = date.day == DateTime.now().day &&
+                          date.month == DateTime.now().month &&
+                          date.year == DateTime.now().year;
+
                       return GestureDetector(
                         onTap: () => appState.updateSelectedDate(date),
                         child: Container(
                           width: 50, // Widened column
-                          color: isSelected
-                              ? AppColors.lightGreen.withAlpha(100)
-                              : Colors.transparent,
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? AppColors.primaryGreen.withOpacity(0.05)
+                                : isToday ? Colors.grey.withOpacity(0.03) : Colors.transparent,
+                            border: isToday ? Border(
+                              left: BorderSide(color: Colors.grey.withOpacity(0.1)),
+                              right: BorderSide(color: Colors.grey.withOpacity(0.1)),
+                            ) : null,
+                          ),
                           child: Column(
                             children: [
                               // Date Header
@@ -227,29 +228,37 @@ class _HabitGridState extends State<HabitGrid> {
                                   height: 54, // Match row height
                                   alignment: Alignment.center,
                                   child: InkWell(
-                                    onTap: () =>
-                                        appState.toggleHabit(habit.id, date),
+                                    onTap: () {
+                                      HapticFeedback.lightImpact();
+                                      appState.toggleHabit(habit.id, date);
+                                    },
                                     borderRadius: BorderRadius.circular(10),
-                                    child: AnimatedContainer(
+                                    child: AnimatedScale(
                                       duration: const Duration(milliseconds: 200),
-                                      width: 34,
-                                      height: 34,
-                                      decoration: BoxDecoration(
-                                        color: isCompleted
-                                            ? AppColors.primaryGreen
-                                            : Colors.grey.withOpacity(0.05),
-                                        border: Border.all(
+                                      scale: isCompleted ? 1.0 : 0.9,
+                                      child: AnimatedContainer(
+                                        duration: const Duration(milliseconds: 300),
+                                        curve: Curves.easeInOutBack,
+                                        width: 38,
+                                        height: 38,
+                                        decoration: BoxDecoration(
                                           color: isCompleted
                                               ? AppColors.primaryGreen
-                                              : Colors.grey.withOpacity(0.1),
+                                              : Colors.grey.withOpacity(0.08),
+                                          border: Border.all(
+                                            color: isCompleted
+                                                ? AppColors.primaryGreen
+                                                : Colors.grey.withOpacity(0.15),
+                                            width: 1.5,
+                                          ),
+                                          borderRadius: BorderRadius.circular(12),
                                         ),
-                                        borderRadius: BorderRadius.circular(10),
+                                        child: isCompleted
+                                            ? const Icon(Icons.check,
+                                                size: 24,
+                                                color: Colors.white)
+                                            : null,
                                       ),
-                                      child: isCompleted
-                                          ? const Icon(Icons.check,
-                                              size: 22,
-                                              color: Colors.white)
-                                          : null,
                                     ),
                                   ),
                                 );
@@ -266,6 +275,109 @@ class _HabitGridState extends State<HabitGrid> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showAddHabitDialog(BuildContext context, AppState appState) {
+    final titleController = TextEditingController();
+    final emojiController = TextEditingController(text: "✨");
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Add Habit"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: emojiController,
+                decoration: const InputDecoration(labelText: "Emoji Icon"),
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 24),
+              ),
+              TextField(
+                controller: titleController,
+                autofocus: true,
+                decoration: const InputDecoration(labelText: "Habit Title"),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancel"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (titleController.text.isNotEmpty) {
+                  appState.addHabit(titleController.text, emojiController.text);
+                }
+                Navigator.pop(context);
+              },
+              child: const Text("Add"),
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  void _showEditHabitDialog(BuildContext context, AppState appState, Habit habit) {
+    final titleController = TextEditingController(text: habit.title);
+    final emojiController = TextEditingController(text: habit.iconEmoji);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Edit Habit"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: emojiController,
+                decoration: const InputDecoration(labelText: "Emoji Icon"),
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 24),
+              ),
+              TextField(
+                controller: titleController,
+                autofocus: true,
+                decoration: const InputDecoration(labelText: "Habit Title"),
+              ),
+            ],
+          ),
+          actions: [
+            Row(
+              children: [
+                IconButton(
+                  onPressed: () {
+                    appState.deleteHabit(habit.id);
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(Icons.delete_outline, color: Colors.red),
+                  tooltip: "Delete Habit",
+                ),
+                const Spacer(),
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("Cancel"),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    if (titleController.text.isNotEmpty) {
+                      appState.updateHabit(habit.id, titleController.text, emojiController.text);
+                    }
+                    Navigator.pop(context);
+                  },
+                  child: const Text("Save"),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
     );
   }
 }
