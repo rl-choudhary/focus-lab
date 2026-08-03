@@ -7,6 +7,7 @@ class Habit {
   Habit({
     required this.id,
     required this.title,
+    // OKOK
     required this.iconEmoji,
     Set<DateTime>? completedDays,
   }) : completedDays = completedDays ?? {};
