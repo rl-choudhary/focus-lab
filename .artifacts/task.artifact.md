@@ -1,4 +1,12 @@
-- [x] Update `DateSelector` to show 30 days
-- [x] Refine `HabitGrid` UI (text size, checkbox alignment, padding)
-- [x] Verify synchronization between S1 and T1
-- [x] Run app on Chrome
+- [ ] Centralize UI styles in `lib/theme/styles.dart`
+- [ ] Modernize `lib/main.dart` (fix deprecations)
+- [ ] Create `FocusCard` component for UI consistency
+- [ ] Refactor dashboard cards to use `FocusCard`
+    - [ ] `SuccessScoreCard`
+    - [ ] `OverallProgress`
+    - [ ] `SuccessLineChart`
+- [ ] Fix deprecations in `lib/screens/dashboard_screen.dart`
+- [ ] Fix deprecations in `lib/widgets/date_selector.dart`
+- [ ] Refactor `DailyTasks` to use Bottom Sheets and fix deprecations
+- [ ] Refactor `HabitGrid` to use Bottom Sheets and fix deprecations
+- [ ] Final verification and cleanup
