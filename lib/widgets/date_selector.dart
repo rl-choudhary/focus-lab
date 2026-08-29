@@ -78,7 +78,7 @@ class _DateSelectorState extends State<DateSelector> {
               decoration: BoxDecoration(
                 color: isSelected ? AppColors.primaryGreen : Colors.transparent,
                 borderRadius: BorderRadius.circular(29),
-                border: isSelected ? null : Border.all(color: Colors.grey.withOpacity(0.1)),
+                border: isSelected ? null : Border.all(color: Colors.grey.withValues(alpha: 0.1)),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -88,7 +88,7 @@ class _DateSelectorState extends State<DateSelector> {
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
-                      color: isSelected ? Colors.white : Colors.grey.withOpacity(0.6),
+                      color: isSelected ? Colors.white : Colors.grey.withValues(alpha: 0.6),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -96,11 +96,11 @@ class _DateSelectorState extends State<DateSelector> {
                     width: 38,
                     height: 38,
                     decoration: BoxDecoration(
-                      color: isSelected ? Colors.white : Colors.white.withOpacity(0.8),
+                      color: isSelected ? Colors.white : Colors.white.withValues(alpha: 0.8),
                       shape: BoxShape.circle,
                       boxShadow: isSelected ? [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Colors.black.withValues(alpha: 0.1),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
                         )

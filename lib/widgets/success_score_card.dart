@@ -3,6 +3,7 @@ import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
 import '../models/app_state.dart';
 import '../theme/colors.dart';
+import 'focus_card.dart';
 
 class SuccessScoreCard extends StatelessWidget {
   const SuccessScoreCard({super.key});
@@ -13,19 +14,7 @@ class SuccessScoreCard extends StatelessWidget {
     final score = appState.dailySuccessScore;
     final percentage = (score * 100).toInt();
 
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
+    return FocusCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -53,7 +42,7 @@ class SuccessScoreCard extends StatelessWidget {
                   ),
                 ],
               ),
-              Icon(Icons.trending_up, color: AppColors.primaryGreen.withOpacity(0.5)),
+              Icon(Icons.trending_up, color: AppColors.primaryGreen.withValues(alpha: 0.5)),
             ],
           ),
           const SizedBox(height: 24),
@@ -73,7 +62,7 @@ class SuccessScoreCard extends StatelessWidget {
               ),
               circularStrokeCap: CircularStrokeCap.round,
               progressColor: AppColors.primaryGreen,
-              backgroundColor: AppColors.lightGreen.withOpacity(0.2),
+              backgroundColor: AppColors.lightGreen.withValues(alpha: 0.2),
             ),
           ),
           const SizedBox(height: 12),

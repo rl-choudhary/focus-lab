@@ -1,12 +1,12 @@
-- [ ] Centralize UI styles in `lib/theme/styles.dart`
-- [ ] Modernize `lib/main.dart` (fix deprecations)
-- [ ] Create `FocusCard` component for UI consistency
-- [ ] Refactor dashboard cards to use `FocusCard`
-    - [ ] `SuccessScoreCard`
-    - [ ] `OverallProgress`
-    - [ ] `SuccessLineChart`
-- [ ] Fix deprecations in `lib/screens/dashboard_screen.dart`
-- [ ] Fix deprecations in `lib/widgets/date_selector.dart`
-- [ ] Refactor `DailyTasks` to use Bottom Sheets and fix deprecations
-- [ ] Refactor `HabitGrid` to use Bottom Sheets and fix deprecations
-- [ ] Final verification and cleanup
+- [x] Centralize UI styles in `lib/theme/styles.dart`
+- [x] Modernize `lib/main.dart` (fix deprecations)
+- [x] Create `FocusCard` component for UI consistency
+- [x] Refactor dashboard cards to use `FocusCard`
+    - [x] `SuccessScoreCard`
+    - [x] `OverallProgress`
+    - [x] `SuccessLineChart`
+- [x] Fix deprecations in `lib/screens/dashboard_screen.dart`
+- [x] Fix deprecations in `lib/widgets/date_selector.dart`
+- [x] Refactor `DailyTasks` to use Bottom Sheets and fix deprecations
+- [x] Refactor `HabitGrid` to use Bottom Sheets and fix deprecations
+- [x] Final verification and cleanup

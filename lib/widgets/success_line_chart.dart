@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../models/app_state.dart';
 import '../theme/colors.dart';
+import 'focus_card.dart';
 
 class SuccessLineChart extends StatelessWidget {
   const SuccessLineChart({super.key});
@@ -23,13 +24,7 @@ class SuccessLineChart extends StatelessWidget {
     maxY = maxY == 0 ? 5 : maxY + 2; // Add some padding
     final dataLen = history.isNotEmpty ? history.length : 7;
 
-    return Container(
-      // Height handled by parent
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(20),
-      ),
+    return FocusCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -53,7 +48,7 @@ class SuccessLineChart extends StatelessWidget {
                   getDrawingHorizontalLine: (value) => FlLine(
                     color: Theme.of(context)
                         .dividerColor
-                        .withOpacity(0.28),
+                        .withValues(alpha: 0.28),
                     strokeWidth: 1.2,
                   ),
                 ),
@@ -114,11 +109,11 @@ class SuccessLineChart extends StatelessWidget {
                   show: true,
                   border: Border(
                     left: BorderSide(
-                      color: Theme.of(context).dividerColor.withOpacity(0.45),
+                      color: Theme.of(context).dividerColor.withValues(alpha: 0.45),
                       width: 1.2,
                     ),
                     bottom: BorderSide(
-                      color: Theme.of(context).dividerColor.withOpacity(0.45),
+                      color: Theme.of(context).dividerColor.withValues(alpha: 0.45),
                       width: 1.2,
                     ),
                   ),
@@ -167,7 +162,7 @@ class SuccessLineChart extends StatelessWidget {
                     ),
                     belowBarData: BarAreaData(
                       show: true,
-                      color: AppColors.primaryGreen.withOpacity(0.16),
+                      color: AppColors.primaryGreen.withValues(alpha: 0.16),
                     ),
                   ),
                   LineChartBarData(
@@ -189,7 +184,7 @@ class SuccessLineChart extends StatelessWidget {
                     ),
                     belowBarData: BarAreaData(
                       show: true,
-                      color: Colors.redAccent.withOpacity(0.08),
+                      color: Colors.redAccent.withValues(alpha: 0.08),
                     ),
                   ),
                 ],

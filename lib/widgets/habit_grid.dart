@@ -113,7 +113,7 @@ class _HabitGridState extends State<HabitGrid> {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 12, top: 8),
                       child: TextButton.icon(
-                        onPressed: () => _showAddHabitDialog(context, appState),
+                        onPressed: () => _showAddHabitBottomSheet(context, appState),
                         icon: const Icon(Icons.add, size: 18, color: AppColors.primaryGreen),
                         label: const Text(
                           "ADD",
@@ -125,7 +125,7 @@ class _HabitGridState extends State<HabitGrid> {
                         ),
                         style: TextButton.styleFrom(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          backgroundColor: AppColors.primaryGreen.withOpacity(0.1),
+                          backgroundColor: AppColors.primaryGreen.withValues(alpha: 0.1),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                         ),
                       ),
@@ -137,7 +137,7 @@ class _HabitGridState extends State<HabitGrid> {
                         padding: const EdgeInsets.only(left: 12, right: 8),
                         child: InkWell(
                           borderRadius: BorderRadius.circular(8),
-                          onTap: () => _showEditHabitDialog(context, appState, habit),
+                          onTap: () => _showEditHabitBottomSheet(context, appState, habit),
                           child: Text(
                             "${habit.iconEmoji} ${habit.title}",
                             style: TextStyle(
@@ -175,11 +175,11 @@ class _HabitGridState extends State<HabitGrid> {
                           width: 50, // Widened column
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? AppColors.primaryGreen.withOpacity(0.05)
-                                : isToday ? Colors.grey.withOpacity(0.03) : Colors.transparent,
+                                ? AppColors.primaryGreen.withValues(alpha: 0.05)
+                                : isToday ? Colors.grey.withValues(alpha: 0.03) : Colors.transparent,
                             border: isToday ? Border(
-                              left: BorderSide(color: Colors.grey.withOpacity(0.1)),
-                              right: BorderSide(color: Colors.grey.withOpacity(0.1)),
+                              left: BorderSide(color: Colors.grey.withValues(alpha: 0.1)),
+                              right: BorderSide(color: Colors.grey.withValues(alpha: 0.1)),
                             ) : null,
                           ),
                           child: Column(
@@ -189,7 +189,7 @@ class _HabitGridState extends State<HabitGrid> {
                                 height: 60,
                                 margin: const EdgeInsets.symmetric(horizontal: 2),
                                 decoration: isSelected ? BoxDecoration(
-                                  color: AppColors.primaryGreen.withOpacity(0.1),
+                                  color: AppColors.primaryGreen.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(12),
                                 ) : null,
                                 child: Column(
@@ -244,11 +244,11 @@ class _HabitGridState extends State<HabitGrid> {
                                         decoration: BoxDecoration(
                                           color: isCompleted
                                               ? AppColors.primaryGreen
-                                              : Colors.grey.withOpacity(0.08),
+                                              : Colors.grey.withValues(alpha: 0.08),
                                           border: Border.all(
                                             color: isCompleted
                                                 ? AppColors.primaryGreen
-                                                : Colors.grey.withOpacity(0.15),
+                                                : Colors.grey.withValues(alpha: 0.15),
                                             width: 1.5,
                                           ),
                                           borderRadius: BorderRadius.circular(12),
@@ -278,104 +278,207 @@ class _HabitGridState extends State<HabitGrid> {
     );
   }
 
-  void _showAddHabitDialog(BuildContext context, AppState appState) {
+  void _showAddHabitBottomSheet(BuildContext context, AppState appState) {
     final titleController = TextEditingController();
     final emojiController = TextEditingController(text: "✨");
 
-    showDialog(
+    showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       builder: (context) {
-        return AlertDialog(
-          title: const Text("Add Habit"),
-          content: Column(
+        return Container(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom + 32,
+            top: 32,
+            left: 24,
+            right: 24,
+          ),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+          ),
+          child: Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextField(
-                controller: emojiController,
-                decoration: const InputDecoration(labelText: "Emoji Icon"),
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 24),
+              Text("Add New Habit",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).textTheme.titleLarge?.color,
+                  )),
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  SizedBox(
+                    width: 80,
+                    child: TextField(
+                      controller: emojiController,
+                      decoration: InputDecoration(
+                        labelText: "Emoji",
+                        filled: true,
+                        fillColor: Colors.grey.withValues(alpha: 0.05),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 24),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: TextField(
+                      controller: titleController,
+                      autofocus: true,
+                      decoration: InputDecoration(
+                        labelText: "Habit Title",
+                        hintText: "e.g. Drink Water",
+                        filled: true,
+                        fillColor: Colors.grey.withValues(alpha: 0.05),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              TextField(
-                controller: titleController,
-                autofocus: true,
-                decoration: const InputDecoration(labelText: "Habit Title"),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                height: 54,
+                child: ElevatedButton(
+                  onPressed: () {
+                    if (titleController.text.isNotEmpty) {
+                      appState.addHabit(titleController.text, emojiController.text);
+                    }
+                    Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primaryGreen,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)),
+                  ),
+                  child: const Text("Create Habit",
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                ),
               ),
             ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("Cancel"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (titleController.text.isNotEmpty) {
-                  appState.addHabit(titleController.text, emojiController.text);
-                }
-                Navigator.pop(context);
-              },
-              child: const Text("Add"),
-            )
-          ],
         );
       },
     );
   }
 
-  void _showEditHabitDialog(BuildContext context, AppState appState, Habit habit) {
+  void _showEditHabitBottomSheet(BuildContext context, AppState appState, Habit habit) {
     final titleController = TextEditingController(text: habit.title);
     final emojiController = TextEditingController(text: habit.iconEmoji);
 
-    showDialog(
+    showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       builder: (context) {
-        return AlertDialog(
-          title: const Text("Edit Habit"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: emojiController,
-                decoration: const InputDecoration(labelText: "Emoji Icon"),
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 24),
-              ),
-              TextField(
-                controller: titleController,
-                autofocus: true,
-                decoration: const InputDecoration(labelText: "Habit Title"),
-              ),
-            ],
+        return Container(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom + 32,
+            top: 32,
+            left: 24,
+            right: 24,
           ),
-          actions: [
-            Row(
-              children: [
-                IconButton(
-                  onPressed: () {
-                    appState.deleteHabit(habit.id);
-                    Navigator.pop(context);
-                  },
-                  icon: const Icon(Icons.delete_outline, color: Colors.red),
-                  tooltip: "Delete Habit",
-                ),
-                const Spacer(),
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text("Cancel"),
-                ),
-                ElevatedButton(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("Edit Habit",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).textTheme.titleLarge?.color,
+                      )),
+                  IconButton(
+                    onPressed: () {
+                      appState.deleteHabit(habit.id);
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(Icons.delete_outline, color: Colors.red, size: 28),
+                    tooltip: "Delete Habit",
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  SizedBox(
+                    width: 80,
+                    child: TextField(
+                      controller: emojiController,
+                      decoration: InputDecoration(
+                        labelText: "Emoji",
+                        filled: true,
+                        fillColor: Colors.grey.withValues(alpha: 0.05),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 24),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: TextField(
+                      controller: titleController,
+                      autofocus: true,
+                      decoration: InputDecoration(
+                        labelText: "Habit Title",
+                        filled: true,
+                        fillColor: Colors.grey.withValues(alpha: 0.05),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                height: 54,
+                child: ElevatedButton(
                   onPressed: () {
                     if (titleController.text.isNotEmpty) {
                       appState.updateHabit(habit.id, titleController.text, emojiController.text);
                     }
                     Navigator.pop(context);
                   },
-                  child: const Text("Save"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primaryGreen,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)),
+                  ),
+                  child: const Text("Save Changes",
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 ),
-              ],
-            ),
-          ],
+              ),
+            ],
+          ),
         );
       },
     );

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/app_state.dart';
 import '../theme/colors.dart';
+import 'focus_card.dart';
 
 class OverallProgress extends StatelessWidget {
   const OverallProgress({super.key});
@@ -20,14 +21,7 @@ class OverallProgress extends StatelessWidget {
     // Ensure maxY is at least 1 to avoid division by zero errors in chart
     final double maxY = maxPossible > 0 ? maxPossible : 1.0;
 
-    return Container(
-      // Height handled by parent or flex
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(
-            20), // Sharper or smoother? Wireframe looks rounded.
-      ),
+    return FocusCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -105,11 +99,11 @@ class OverallProgress extends StatelessWidget {
                   show: true,
                   border: Border(
                     left: BorderSide(
-                      color: Theme.of(context).dividerColor.withOpacity(0.35),
+                      color: Theme.of(context).dividerColor.withValues(alpha: 0.35),
                       width: 1,
                     ),
                     bottom: BorderSide(
-                      color: Theme.of(context).dividerColor.withOpacity(0.35),
+                      color: Theme.of(context).dividerColor.withValues(alpha: 0.35),
                       width: 1,
                     ),
                   ),
@@ -119,7 +113,7 @@ class OverallProgress extends StatelessWidget {
                   drawVerticalLine: false,
                   horizontalInterval: maxY / 3,
                   getDrawingHorizontalLine: (value) => FlLine(
-                    color: Theme.of(context).dividerColor.withOpacity(0.22),
+                    color: Theme.of(context).dividerColor.withValues(alpha: 0.22),
                     strokeWidth: 1,
                   ),
                 ),
@@ -167,7 +161,7 @@ class OverallProgress extends StatelessWidget {
           backDrawRodData: BackgroundBarChartRodData(
             show: true,
             toY: max,
-            color: AppColors.lightGreen.withAlpha(50),
+            color: AppColors.lightGreen.withValues(alpha: 0.1),
           ),
         ),
       ],

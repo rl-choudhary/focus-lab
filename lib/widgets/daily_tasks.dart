@@ -105,7 +105,7 @@ class _DayTaskPanelState extends State<DayTaskPanel>
                         ),
                         circularStrokeCap: CircularStrokeCap.round,
                         progressColor: AppColors.primaryGreen,
-                        backgroundColor: Colors.white.withOpacity(0.5),
+                        backgroundColor: Colors.white.withValues(alpha: 0.5),
                       ),
                     ],
                   ),
@@ -121,7 +121,7 @@ class _DayTaskPanelState extends State<DayTaskPanel>
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.assignment_turned_in_outlined,
-                          size: 48, color: Colors.grey.withOpacity(0.3)),
+                          size: 48, color: Colors.grey.withValues(alpha: 0.3)),
                         const SizedBox(height: 12),
                         Text("No tasks for today",
                           style: TextStyle(
@@ -215,27 +215,68 @@ class _DayTaskPanelState extends State<DayTaskPanel>
 
   void _showAddTaskDialog(BuildContext context, AppState appState) {
     final controller = TextEditingController();
-    showDialog(
+    showModalBottomSheet(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text("New Task"),
-        content: TextField(
-          controller: controller,
-          decoration: const InputDecoration(hintText: "Enter task name"),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(ctx).viewInsets.bottom + 32,
+          top: 32,
+          left: 24,
+          right: 24,
         ),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(ctx), child: const Text("Cancel")),
-          ElevatedButton(
-            onPressed: () {
-              if (controller.text.isNotEmpty) {
-                appState.addTask(controller.text, appState.selectedDate);
-                Navigator.pop(ctx);
-              }
-            },
-            child: const Text("Add"),
-          )
-        ],
+        decoration: BoxDecoration(
+          color: Theme.of(ctx).colorScheme.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Add New Task",
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(ctx).textTheme.titleLarge?.color,
+                )),
+            const SizedBox(height: 24),
+            TextField(
+              controller: controller,
+              autofocus: true,
+              decoration: InputDecoration(
+                hintText: "What needs to be done?",
+                filled: true,
+                fillColor: Colors.grey.withValues(alpha: 0.05),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              height: 54,
+              child: ElevatedButton(
+                onPressed: () {
+                  if (controller.text.isNotEmpty) {
+                    appState.addTask(controller.text, appState.selectedDate);
+                    Navigator.pop(ctx);
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryGreen,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16)),
+                ),
+                child: const Text("Create Task",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -258,7 +299,7 @@ class TaskTile extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.grey.withOpacity(0.05),
+        color: Colors.grey.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(16),
       ),
       child: InkWell(
@@ -277,7 +318,7 @@ class TaskTile extends StatelessWidget {
                 color: task.isCompleted
                     ? AppColors.primaryGreen
                     : Colors.transparent,
-                borderRadius: BorderRadius.circular(6),
+                borderRadius: BorderRadius.circular(8),
                 border: Border.all(
                   color: task.isCompleted
                       ? AppColors.primaryGreen
@@ -285,7 +326,7 @@ class TaskTile extends StatelessWidget {
                               .textTheme
                               .bodyMedium
                               ?.color
-                              ?.withAlpha(100) ??
+                              ?.withValues(alpha: 0.4) ??
                           Colors.grey),
                   width: 2,
                 ),
@@ -300,6 +341,7 @@ class TaskTile extends StatelessWidget {
                 duration: const Duration(milliseconds: 300),
                 style: TextStyle(
                   fontSize: 16,
+                  fontWeight: FontWeight.w500,
                   decoration: task.isCompleted
                       ? TextDecoration.lineThrough
                       : TextDecoration.none,
@@ -312,7 +354,7 @@ class TaskTile extends StatelessWidget {
             ),
               IconButton(
                 icon: Icon(Icons.delete_outline,
-                    size: 22, color: Colors.red.withOpacity(0.4)),
+                    size: 22, color: Colors.red.withValues(alpha: 0.4)),
                 onPressed: onDelete,
               ),
             ],
@@ -366,7 +408,7 @@ class ConfettiPainter extends CustomPainter {
         Colors.purple
       ];
       paint.color =
-          colorFn[r.nextInt(colorFn.length)].withOpacity(1 - progress);
+          colorFn[r.nextInt(colorFn.length)].withValues(alpha: 1 - progress);
 
       final x = centerX + cos(angle) * dist;
       final y =
@@ -380,7 +422,7 @@ class ConfettiPainter extends CustomPainter {
       final textSpan = TextSpan(
         text: 'Well Done!',
         style: TextStyle(
-          color: AppColors.primaryGreen.withOpacity((1 - progress).clamp(0, 1)),
+          color: AppColors.primaryGreen.withValues(alpha: (1 - progress).clamp(0, 1)),
           fontSize: 40 * (0.5 + progress), // Scale up
           fontWeight: FontWeight.bold,
         ),
