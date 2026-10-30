@@ -34,12 +34,9 @@ class _HabitGridState extends State<HabitGrid> {
     if (!mounted) return;
     final appState = Provider.of<AppState>(context, listen: false);
 
-    // Ensure we have a selection (Auto-select today if needed, though AppState handles init)
-    // If logic needed to "auto select current date if not selected", AppState already defaults to Now.
-    // Use the same generation logic as build
     final today = DateTime.now();
     final days = List.generate(
-        14, (index) => today.subtract(Duration(days: 13 - index)));
+        30, (index) => today.subtract(Duration(days: 29 - index)));
 
     final selectedIndex = days.indexWhere((d) =>
         d.year == appState.selectedDate.year &&
@@ -54,13 +51,7 @@ class _HabitGridState extends State<HabitGrid> {
         final viewport = _scrollController.position.viewportDimension;
         final maxScroll = _scrollController.position.maxScrollExtent;
 
-        // Center the selected item
-        // item center = offset + itemWidth/2
-        // viewport center = viewport/2
-        // scroll needed = item center - viewport center
         double target = (offset + itemWidth / 2) - (viewport / 2);
-
-        // Clamp to valid range
         target = target.clamp(0.0, maxScroll);
 
         _scrollController.animateTo(
@@ -69,8 +60,7 @@ class _HabitGridState extends State<HabitGrid> {
           curve: Curves.easeOut,
         );
       } catch (e) {
-        // Handle cases where layout might not be ready
-        print("Scroll error: $e");
+        debugPrint("Scroll error: $e");
       }
     }
   }
@@ -81,7 +71,6 @@ class _HabitGridState extends State<HabitGrid> {
     final habits = appState.habits;
     final screenWidth = MediaQuery.of(context).size.width;
 
-    // Trigger scroll if width or selection changes
     if (_lastWidth != screenWidth ||
         _lastSelectedDate != appState.selectedDate) {
       _lastWidth = screenWidth;
@@ -89,10 +78,10 @@ class _HabitGridState extends State<HabitGrid> {
       WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToSelected());
     }
 
-    // Generate last 14 days
+    // Generate last 30 days
     final today = DateTime.now();
     final days = List.generate(
-        14, (index) => today.subtract(Duration(days: 13 - index)));
+        30, (index) => today.subtract(Duration(days: 29 - index)));
 
     return Container(
       width: double.infinity,
@@ -112,21 +101,39 @@ class _HabitGridState extends State<HabitGrid> {
                     height: 60,
                     child: Padding(
                       padding: const EdgeInsets.only(left: 12, top: 8),
-                      child: TextButton.icon(
-                        onPressed: () => _showAddHabitBottomSheet(context, appState),
-                        icon: const Icon(Icons.add, size: 18, color: AppColors.primaryGreen),
-                        label: const Text(
-                          "ADD",
-                          style: TextStyle(
-                            color: AppColors.primaryGreen,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [AppColors.primaryGreen, AppColors.primaryGreen.withValues(alpha: 0.8)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
                           ),
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.primaryGreen.withValues(alpha: 0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
                         ),
-                        style: TextButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          backgroundColor: AppColors.primaryGreen.withValues(alpha: 0.1),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        child: TextButton.icon(
+                          onPressed: () => _showAddHabitBottomSheet(context, appState),
+                          icon: const Icon(Icons.add_rounded, size: 18, color: Colors.white),
+                          label: const Text(
+                            "ADD HABIT",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 11,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            backgroundColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                          ),
                         ),
                       ),
                     ),

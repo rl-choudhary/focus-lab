@@ -14,7 +14,7 @@ class DateSelector extends StatefulWidget {
 class _DateSelectorState extends State<DateSelector> {
   final ScrollController _scrollController = ScrollController();
   final List<DateTime> _days = List.generate(
-      14, (index) => DateTime.now().subtract(Duration(days: 13 - index)));
+      30, (index) => DateTime.now().subtract(Duration(days: 29 - index)));
 
   @override
   void initState() {
@@ -37,7 +37,7 @@ class _DateSelectorState extends State<DateSelector> {
         d.day == appState.selectedDate.day);
 
     if (selectedIndex != -1 && _scrollController.hasClients) {
-      const itemWidth = 64.0;
+      const itemWidth = 70.0;
       final offset = selectedIndex * itemWidth;
       final viewport = _scrollController.position.viewportDimension;
       final target = (offset + itemWidth / 2) - (viewport / 2);
@@ -60,17 +60,19 @@ class _DateSelectorState extends State<DateSelector> {
         controller: _scrollController,
         scrollDirection: Axis.horizontal,
         itemCount: _days.length,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         itemBuilder: (context, index) {
           final date = _days[index];
           final isSelected = date.year == appState.selectedDate.year &&
               date.month == appState.selectedDate.month &&
               date.day == appState.selectedDate.day;
 
-          return GestureDetector(
+          return InkWell(
             onTap: () {
               appState.updateSelectedDate(date);
               _scrollToSelected();
             },
+            borderRadius: BorderRadius.circular(29),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               width: 58,

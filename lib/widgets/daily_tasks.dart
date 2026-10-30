@@ -144,7 +144,8 @@ class _DayTaskPanelState extends State<DayTaskPanel>
                           task: task,
                           onToggle: () =>
                               _confirmToggle(context, appState, task.id),
-                          onDelete: () => appState.deleteTask(task.id),
+                          onDelete: () => _confirmDelete(context, appState, task.id),
+                          onEdit: () => _showEditTaskDialog(context, appState, task),
                         ))
                     .toList(),
               ),
@@ -154,15 +155,33 @@ class _DayTaskPanelState extends State<DayTaskPanel>
                 alignment: Alignment.bottomCenter,
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 10),
-                  child: FloatingActionButton.extended(
-                    backgroundColor: const Color(0xFF333333),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30)),
-                    onPressed: () => _showAddTaskDialog(context, appState),
-                    icon: const Icon(Icons.add, color: Colors.white),
-                    label: const Text("NEW",
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold)),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [AppColors.primaryGreen, AppColors.primaryGreen.withValues(alpha: 0.8)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(30),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primaryGreen.withValues(alpha: 0.3),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: FloatingActionButton.extended(
+                      backgroundColor: Colors.transparent,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30)),
+                      onPressed: () => _showAddTaskDialog(context, appState),
+                      icon: const Icon(Icons.add, color: Colors.white),
+                      label: const Text("ADD NEW TASK",
+                          style: TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 0.5)),
+                    ),
                   ),
                 ),
               ),
@@ -213,69 +232,249 @@ class _DayTaskPanelState extends State<DayTaskPanel>
     }
   }
 
+  void _confirmDelete(BuildContext context, AppState appState, String taskId) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text("Delete Task"),
+        content: const Text("Are you sure you want to delete this task?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () {
+              appState.deleteTask(taskId);
+              Navigator.pop(ctx);
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text("Delete"),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _showAddTaskDialog(BuildContext context, AppState appState) {
     final controller = TextEditingController();
+    TimeOfDay? selectedTime;
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => Container(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(ctx).viewInsets.bottom + 32,
-          top: 32,
-          left: 24,
-          right: 24,
-        ),
-        decoration: BoxDecoration(
-          color: Theme.of(ctx).colorScheme.surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Add New Task",
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(ctx).textTheme.titleLarge?.color,
-                )),
-            const SizedBox(height: 24),
-            TextField(
-              controller: controller,
-              autofocus: true,
-              decoration: InputDecoration(
-                hintText: "What needs to be done?",
-                filled: true,
-                fillColor: Colors.grey.withValues(alpha: 0.05),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide.none,
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setState) => Container(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(ctx).viewInsets.bottom + 32,
+            top: 32,
+            left: 24,
+            right: 24,
+          ),
+          decoration: BoxDecoration(
+            color: Theme.of(ctx).colorScheme.surface,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Add New Task",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(ctx).textTheme.titleLarge?.color,
+                  )),
+              const SizedBox(height: 24),
+              TextField(
+                controller: controller,
+                autofocus: true,
+                decoration: InputDecoration(
+                  hintText: "What needs to be done?",
+                  filled: true,
+                  fillColor: Colors.grey.withValues(alpha: 0.05),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              height: 54,
-              child: ElevatedButton(
-                onPressed: () {
-                  if (controller.text.isNotEmpty) {
-                    appState.addTask(controller.text, appState.selectedDate);
-                    Navigator.pop(ctx);
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryGreen,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16)),
-                ),
-                child: const Text("Create Task",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  const Icon(Icons.access_time, size: 20, color: Colors.grey),
+                  const SizedBox(width: 8),
+                  TextButton(
+                    onPressed: () async {
+                      final time = await showTimePicker(
+                        context: context,
+                        initialTime: selectedTime ?? TimeOfDay.now(),
+                      );
+                      if (time != null) {
+                        setState(() {
+                          selectedTime = time;
+                        });
+                      }
+                    },
+                    child: Text(
+                      selectedTime == null
+                          ? "Select Reminder Time (Optional)"
+                          : "Time: ${selectedTime!.format(context)}",
+                      style: TextStyle(
+                        color: selectedTime == null ? Colors.grey : AppColors.primaryGreen,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  if (selectedTime != null)
+                    IconButton(
+                      icon: const Icon(Icons.clear, size: 18, color: Colors.grey),
+                      onPressed: () {
+                        setState(() {
+                          selectedTime = null;
+                        });
+                      },
+                    ),
+                ],
               ),
-            ),
-          ],
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                height: 54,
+                child: ElevatedButton(
+                  onPressed: () {
+                    if (controller.text.isNotEmpty) {
+                      appState.addTask(
+                        controller.text,
+                        appState.selectedDate,
+                        time: selectedTime,
+                      );
+                      Navigator.pop(ctx);
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primaryGreen,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)),
+                  ),
+                  child: const Text("Create Task",
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showEditTaskDialog(BuildContext context, AppState appState, AppTask task) {
+    final controller = TextEditingController(text: task.title);
+    TimeOfDay? selectedTime = task.time;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setState) => Container(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(ctx).viewInsets.bottom + 32,
+            top: 32,
+            left: 24,
+            right: 24,
+          ),
+          decoration: BoxDecoration(
+            color: Theme.of(ctx).colorScheme.surface,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Edit Task (Long Press)",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(ctx).textTheme.titleLarge?.color,
+                  )),
+              const SizedBox(height: 24),
+              TextField(
+                controller: controller,
+                autofocus: true,
+                decoration: InputDecoration(
+                  hintText: "Task title",
+                  filled: true,
+                  fillColor: Colors.grey.withValues(alpha: 0.05),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  const Icon(Icons.access_time, size: 20, color: Colors.grey),
+                  const SizedBox(width: 8),
+                  TextButton(
+                    onPressed: () async {
+                      final time = await showTimePicker(
+                        context: context,
+                        initialTime: selectedTime ?? TimeOfDay.now(),
+                      );
+                      if (time != null) {
+                        setState(() {
+                          selectedTime = time;
+                        });
+                      }
+                    },
+                    child: Text(
+                      selectedTime == null
+                          ? "Select Reminder Time (Optional)"
+                          : "Time: ${selectedTime!.format(context)}",
+                      style: TextStyle(
+                        color: selectedTime == null ? Colors.grey : AppColors.primaryGreen,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  if (selectedTime != null)
+                    IconButton(
+                      icon: const Icon(Icons.clear, size: 18, color: Colors.grey),
+                      onPressed: () {
+                        setState(() {
+                          selectedTime = null;
+                        });
+                      },
+                    ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                height: 54,
+                child: ElevatedButton(
+                  onPressed: () {
+                    if (controller.text.isNotEmpty) {
+                      appState.updateTask(task.id, controller.text, selectedTime);
+                      Navigator.pop(ctx);
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primaryGreen,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)),
+                  ),
+                  child: const Text("Save Changes",
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -286,12 +485,14 @@ class TaskTile extends StatelessWidget {
   final AppTask task;
   final VoidCallback onToggle;
   final VoidCallback onDelete;
+  final VoidCallback onEdit;
 
   const TaskTile({
     super.key,
     required this.task,
     required this.onToggle,
     required this.onDelete,
+    required this.onEdit,
   });
 
   @override
@@ -304,6 +505,7 @@ class TaskTile extends StatelessWidget {
       ),
       child: InkWell(
         onTap: onToggle,
+        onLongPress: onEdit,
         borderRadius: BorderRadius.circular(16),
         child: Padding(
           padding: const EdgeInsets.all(12.0),
@@ -337,25 +539,44 @@ class TaskTile extends StatelessWidget {
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: AnimatedDefaultTextStyle(
-                duration: const Duration(milliseconds: 300),
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  decoration: task.isCompleted
-                      ? TextDecoration.lineThrough
-                      : TextDecoration.none,
-                  color: task.isCompleted
-                      ? Colors.grey
-                      : Theme.of(context).textTheme.bodyLarge?.color,
-                ),
-                child: Text(task.title),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AnimatedDefaultTextStyle(
+                    duration: const Duration(milliseconds: 300),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      decoration: task.isCompleted
+                          ? TextDecoration.lineThrough
+                          : TextDecoration.none,
+                      color: task.isCompleted
+                          ? Colors.grey
+                          : Theme.of(context).textTheme.bodyLarge?.color,
+                    ),
+                    child: Text(task.title),
+                  ),
+                  if (task.time != null) ...[
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        const Icon(Icons.access_time, size: 12, color: Colors.grey),
+                        const SizedBox(width: 4),
+                        Text(
+                          task.time!.format(context),
+                          style: const TextStyle(fontSize: 12, color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  ],
+                ],
               ),
             ),
               IconButton(
                 icon: Icon(Icons.delete_outline,
                     size: 22, color: Colors.red.withValues(alpha: 0.4)),
                 onPressed: onDelete,
+                tooltip: "Delete Task",
               ),
             ],
           ),

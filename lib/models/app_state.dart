@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'habit.dart';
 import 'task.dart';
+import '../services/notification_service.dart';
 
 enum DashboardTab { tasks, habits }
 
@@ -115,19 +116,56 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addTask(String title, DateTime date) {
+  void addTask(String title, DateTime date, {TimeOfDay? time}) {
+    final id = DateTime.now().millisecondsSinceEpoch.toString();
     _tasks.add(AppTask(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
+      id: id,
+      title: title,
+      date: date,
+      time: time,
+    ));
+    if (time != null) {
+      NotificationService.scheduleTaskNotification(
+        id: id.hashCode,
         title: title,
-        date: date));
+        scheduledDate: date,
+        time: time,
+      );
+    }
     _saveToPrefs();
     notifyListeners();
   }
 
   void deleteTask(String taskId) {
+    NotificationService.cancelNotification(taskId.hashCode);
     _tasks.removeWhere((t) => t.id == taskId);
     _saveToPrefs();
     notifyListeners();
+  }
+
+  void updateTask(String taskId, String newTitle, TimeOfDay? newTime) {
+    final index = _tasks.indexWhere((t) => t.id == taskId);
+    if (index != -1) {
+      final oldTask = _tasks[index];
+      _tasks[index] = AppTask(
+        id: oldTask.id,
+        title: newTitle,
+        date: oldTask.date,
+        time: newTime,
+        isCompleted: oldTask.isCompleted,
+      );
+      NotificationService.cancelNotification(taskId.hashCode);
+      if (newTime != null) {
+        NotificationService.scheduleTaskNotification(
+          id: taskId.hashCode,
+          title: newTitle,
+          scheduledDate: oldTask.date,
+          time: newTime,
+        );
+      }
+      _saveToPrefs();
+      notifyListeners();
+    }
   }
 
   void addHabit(String title, String emoji) {

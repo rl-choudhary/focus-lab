@@ -1,4 +1,4 @@
-package com.example.lama01
+package com.dtrend.my.focus.habit
 
 import io.flutter.embedding.android.FlutterActivity
 
