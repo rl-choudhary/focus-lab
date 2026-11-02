@@ -27,8 +27,32 @@ class AppState extends ChangeNotifier {
   bool _isDarkMode = false;
   DashboardTab _selectedTab = DashboardTab.tasks;
 
-  AppState() {
-    _loadFromPrefs();
+  final SharedPreferences? _prefsInstance;
+
+  AppState([this._prefsInstance]) {
+    if (_prefsInstance != null) {
+      _loadFromPrefsSync(_prefsInstance!);
+    } else {
+      _loadFromPrefs();
+    }
+  }
+
+  void _loadFromPrefsSync(SharedPreferences prefs) {
+    try {
+      _isDarkMode = prefs.getBool('isDarkMode') ?? false;
+
+      final habitsJson = prefs.getStringList('habits');
+      if (habitsJson != null) {
+        _habits = habitsJson.map((e) => Habit.fromJson(jsonDecode(e))).toList();
+      }
+
+      final tasksJson = prefs.getStringList('tasks');
+      if (tasksJson != null) {
+        _tasks = tasksJson.map((e) => AppTask.fromJson(jsonDecode(e))).toList();
+      }
+    } catch (e) {
+      debugPrint("Error loading from prefs sync: $e");
+    }
   }
 
   Future<void> _loadFromPrefs() async {

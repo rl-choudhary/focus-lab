@@ -4,8 +4,30 @@ import '../models/app_state.dart';
 import '../services/notification_service.dart';
 import '../theme/colors.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  bool _isPermissionGranted = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkPermissionStatus();
+  }
+
+  Future<void> _checkPermissionStatus() async {
+    final granted = await NotificationService.isPermissionGranted();
+    if (mounted) {
+      setState(() {
+        _isPermissionGranted = granted;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,28 +81,53 @@ class SettingsScreen extends StatelessWidget {
                 ListTile(
                   title: const Text("Enable Notifications", style: TextStyle(fontWeight: FontWeight.w500)),
                   subtitle: const Text("Allow Focus Lab to send task reminders"),
-                  trailing: ElevatedButton(
-                    onPressed: () async {
-                      final granted = await NotificationService.requestPermissions();
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              granted
-                                  ? "Notifications enabled successfully!"
-                                  : "Notification permission was denied or not granted.",
-                            ),
+                  trailing: _isPermissionGranted
+                      ? Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryGreen.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: AppColors.primaryGreen, width: 1.5),
                           ),
-                        );
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryGreen,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    ),
-                    child: const Text("Grant Permission"),
-                  ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.check_circle, size: 16, color: AppColors.primaryGreen),
+                              SizedBox(width: 6),
+                              Text(
+                                "Granted",
+                                style: TextStyle(
+                                  color: AppColors.primaryGreen,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : ElevatedButton(
+                          onPressed: () async {
+                            final granted = await NotificationService.requestPermissions();
+                            await _checkPermissionStatus();
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    granted
+                                        ? "Notifications enabled successfully!"
+                                        : "Notification permission was denied or not granted.",
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryGreen,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          ),
+                          child: const Text("Grant Permission"),
+                        ),
                 ),
               ],
             ),
@@ -107,8 +154,8 @@ class SettingsScreen extends StatelessWidget {
                 ),
               ],
             ),
-            child: Column(
-              children: const [
+            child: const Column(
+              children: [
                 ListTile(
                   title: Text("App Name", style: TextStyle(fontWeight: FontWeight.w500)),
                   trailing: Text("Focus Lab", style: TextStyle(color: Colors.grey)),
@@ -116,7 +163,7 @@ class SettingsScreen extends StatelessWidget {
                 Divider(height: 1),
                 ListTile(
                   title: Text("Version", style: TextStyle(fontWeight: FontWeight.w500)),
-                  trailing: Text("1.0.0+1", style: TextStyle(color: Colors.grey)),
+                  trailing: Text("1.0.1+2", style: TextStyle(color: Colors.grey)),
                 ),
               ],
             ),

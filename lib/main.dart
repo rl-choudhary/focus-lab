@@ -7,24 +7,35 @@ import 'theme/colors.dart';
 
 import 'services/notification_service.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences? prefs;
+  try {
+    prefs = await SharedPreferences.getInstance();
+  } catch (e) {
+    debugPrint("Failed to load SharedPreferences: $e");
+  }
+
   try {
     await NotificationService.init();
+    await NotificationService.scheduleDailyEngagementNotifications();
   } catch (e) {
     debugPrint("Failed to initialize notifications: $e");
   }
-  runApp(const MyApp());
+  runApp(MyApp(prefs: prefs));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final SharedPreferences? prefs;
+  const MyApp({super.key, this.prefs});
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AppState()),
+        ChangeNotifierProvider(create: (_) => AppState(prefs)),
       ],
       child: Consumer<AppState>(
         builder: (context, appState, child) {
