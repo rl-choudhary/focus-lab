@@ -5,7 +5,15 @@ import 'models/app_state.dart';
 import 'screens/dashboard_screen.dart';
 import 'theme/colors.dart';
 
-void main() {
+import 'services/notification_service.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  try {
+    await NotificationService.init();
+  } catch (e) {
+    debugPrint("Failed to initialize notifications: $e");
+  }
   runApp(const MyApp());
 }
 

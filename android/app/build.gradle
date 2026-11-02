@@ -38,7 +38,19 @@ android {
         multiDexEnabled true
     }
 
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+
     signingConfigs {
+        debug {
+            storeFile file("C:/temp/.android/debug.keystore")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
+        }
         release {
             keyAlias = keystoreProperties.getProperty('keyAlias')
             keyPassword = keystoreProperties.getProperty('keyPassword')
@@ -48,6 +60,9 @@ android {
     }
 
     buildTypes {
+        debug {
+            signingConfig = signingConfigs.debug
+        }
         release {
             signingConfig = signingConfigs.release
         }

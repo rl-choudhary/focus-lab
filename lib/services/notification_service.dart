@@ -49,6 +49,8 @@ class NotificationService {
       return true;
     }
 
+    await init();
+
     final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
         _notificationsPlugin.resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>();
