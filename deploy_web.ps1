@@ -1,7 +1,7 @@
 $ErrorActionPreference = "Stop"
 
 echo "Building Flutter Web App..."
-flutter build web --release --base-href "/focus_lab_flutter/"
+flutter build web --release --base-href "/focus-lab/"
 
 echo "Deploying to GitHub Pages..."
 cd build\web
@@ -15,7 +15,7 @@ git branch -M gh-pages
 
 # Add the remote (it might already exist, so ignore error)
 try {
-    git remote add origin https://github.com/chirag-deshwal/focus_lab_flutter.git
+    git remote add origin https://github.com/rl-choudhary/focus-lab.git
 } catch {
     echo "Remote already exists"
 }
@@ -24,4 +24,4 @@ try {
 git push -f origin gh-pages
 
 echo "Deployed Successfully!"
-echo "Visit: https://chirag-deshwal.github.io/focus_lab_flutter/"
+echo "Visit: https://rl-choudhary.github.io/focus-lab/"

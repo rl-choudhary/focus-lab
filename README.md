@@ -3,16 +3,16 @@
 
 ### Flutter Based - Task organizer and help to track habits.
 
-* This repo is maintained by chirag choudhary.
-* Experience on web - https://chirag-deshwal.github.io/focus_lab_flutter
+* This repo is maintained by RL Choudhary.
+* Experience on web - https://rl-choudhary.github.io/focus-lab/
 
 * [Made by ❤️ Anitigravity]
 
 ## Screenshots
 
-![App Screenshot](https://raw.githubusercontent.com/chirag-deshwal/focus_lab_flutter/refs/heads/main/screenshot%2001.jpg)
+![App Screenshot](https://raw.githubusercontent.com/rl-choudhary/focus-lab/refs/heads/main/screenshot%2001.jpg)
 
-![App Screenshot](https://raw.githubusercontent.com/chirag-deshwal/focus_lab_flutter/refs/heads/main/screenshot%2002.jpg)
+![App Screenshot](https://raw.githubusercontent.com/rl-choudhary/focus-lab/refs/heads/main/screenshot%2002.jpg)
 
 
 ## 🎯 Topic: Why task focus and habit trackers are essential today to combat distraction, rebuild attention, and maintain consistency in an internet-driven, always-connected world.
